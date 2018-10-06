@@ -27,9 +27,14 @@ public class UserMealsUtil {
         final Map<LocalDate, Integer> caloriesMap = new HashMap<>();
 
         return mealList.stream()
-                .peek(meal -> caloriesMap.merge(meal.getDateTime().toLocalDate(), meal.getCalories(), (a, b) -> a + b))
+                .peek(meal -> {
+                    caloriesMap.merge(meal.getDateTime().toLocalDate(), meal.getCalories(), (a, b) -> a + b);
+                    System.out.println("peek");
+                })
                 .filter(meal -> TimeUtil.isBetween(meal.getDateTime().toLocalTime(), startTime, endTime))
+                .sorted(Comparator.comparing(UserMeal::getDateTime))
                 .map(meal -> {
+                    System.out.println("map");
                     LocalDate date = meal.getDateTime().toLocalDate();
                     if (caloriesMap.get(date) > caloriesPerDay)
                         return new UserMealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(), true);
